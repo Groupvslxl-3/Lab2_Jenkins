@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admin-deployment
+  labels:
+    app: admin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: admin
+  template:
+    metadata:
+      labels:
+        app: admin 
+    spec:
+      containers:
+      - name: admin
+        imagePullPolicy: Always
+        image: shiroizdabezt/admin:v2
+        ports:
+        - containerPort: 8080
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: admin-service
+  labels:
+    app: admin
+spec:
+  selector:
+    app: admin
+  ports:
+  - protocol: TCP
+    port: 8080         # Port mà Service expose (truy cập từ cluster)
+    targetPort: 8080 # Port mà container lắng nghe
+    nodePort: 30081  # Port mà node (máy chủ) expose ra ngoài
+  type: NodePort
+
+  

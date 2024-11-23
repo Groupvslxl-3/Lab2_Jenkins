@@ -1,0 +1,27 @@
+version: '2'
+
+services:
+    admin:
+      build:  
+        dockerfile: Dockerfile
+        context: admin/
+      ports: 
+          - 8080:8080
+      volumes:
+          -   data_app:/app/data
+    backend:
+      build:  
+        dockerfile: Dockerfile
+        context: backend/
+      ports: 
+          - 4000:4000
+      volumes:
+          -   data_app:/app/data
+    frontend:
+      build:  
+        dockerfile: Dockerfile
+        context: frontend/
+      ports: 
+          - 3000:3000
+volumes:
+  data_app:

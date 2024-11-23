@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deployment
+  labels:
+    app: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend 
+    spec:
+      containers:
+      - name: frontend
+        imagePullPolicy: Always
+        image: shiroizdabezt/frontend:v2
+        ports:
+        - containerPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+  labels:
+    app: frontend
+spec:
+  selector:
+    app: frontend
+  ports:
+  - protocol: TCP
+    port: 80         # Port mà Service expose (truy cập từ cluster)
+    targetPort: 80 # Port mà container lắng nghe
+    nodePort: 30080  # Port mà node (máy chủ) expose ra ngoài
+  type: NodePort
+
+  
