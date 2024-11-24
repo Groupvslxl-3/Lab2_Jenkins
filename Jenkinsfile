@@ -2,7 +2,7 @@ pipeline {
     environment {
         DOCKER_CREDENTIALS_ID = 'docker_hub'
         DOCKER_REGISTRY = 'pokilee10'
-        KUBE_CONFIG_ID = ''
+        KUBE_CONFIG_ID = 'minikube-jenkins-secret'
         KUBE_CLUSTER_NAME = 'minikube'
         KUBE_CONTEXT_NAME = 'minikube'
         KUBE_SERVER_URL = 'https://192.168.39.98:8443'
