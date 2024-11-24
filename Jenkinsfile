@@ -7,7 +7,6 @@ pipeline {
         KUBE_CONTEXT_NAME = 'minikube'
         KUBE_SERVER_URL = 'https://192.168.39.98:8443'
     }
-
     agent any
 
     stages {
