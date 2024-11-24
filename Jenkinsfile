@@ -10,7 +10,7 @@ pipeline {
             parallel {
                 stage('Build Frontend') {
                     steps {
-                        withDockerRegistry(credentialsId: 'docker_hub', url: 'https://index.docker.io/v1/') {
+                        withDockerRegistry(credentialsId: 'docker_hub', url: 'https://index.docker.io/v1/') { 
                             dir('frontend') {
                                 sh 'docker build -t pokilee10/jenkins_frontend:latest .'
                                 sh 'docker push pokilee10/jenkins_frontend:latest'
@@ -37,6 +37,15 @@ pipeline {
                             }
                         }
                     }
+                }
+            }
+        }
+        stage('Test') {
+            steps {
+                //Note: Replace below function with your generated pipeline script
+                withKubeConfig(caCertificate: '', clusterName: 'minikube', contextName: 'minikube', credentialsId: '', namespace: '', restrictKubeConfigAccess: false, serverUrl: 'https://192.168.39.98:8443') {
+                    sh "kubectl get ns"
+                    sh "helm ls"
                 }
             }
         }
