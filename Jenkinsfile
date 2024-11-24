@@ -125,6 +125,7 @@ def verifyDeployments() {
             kubectl get pods
             kubectl get services
             kubectl get deployments
+            minikube service list
         '''
     }
 }
