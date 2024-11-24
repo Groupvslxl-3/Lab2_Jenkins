@@ -7,28 +7,36 @@ pipeline {
             }
         }
         stage('Build and Push Images Stage') {
-            steps {
-                withDockerRegistry(credentialsId: 'docker_hub', url: 'https://index.docker.io/v1/') {
-                    parallel(
-                        frontend: {
+            parallel {
+                stage('Build Frontend') {
+                    steps {
+                        withDockerRegistry(credentialsId: 'docker_hub', url: 'https://index.docker.io/v1/') {
                             dir('frontend') {
                                 sh 'docker build -t pokilee10/jenkins_frontend:latest .'
                                 sh 'docker push pokilee10/jenkins_frontend:latest'
                             }
-                        },
-                        backend: {
+                        }
+                    }
+                }
+                stage('Build Backend') {
+                    steps {
+                        withDockerRegistry(credentialsId: 'docker_hub', url: 'https://index.docker.io/v1/') {
                             dir('backend') {
                                 sh 'docker build -t pokilee10/jenkins_backend:latest .'
                                 sh 'docker push pokilee10/jenkins_backend:latest'
                             }
-                        },
-                        admin: {
+                        }
+                    }
+                }
+                stage('Build Admin') {
+                    steps {
+                        withDockerRegistry(credentialsId: 'docker_hub', url: 'https://index.docker.io/v1/') {
                             dir('admin') {
                                 sh 'docker build -t pokilee10/jenkins_admin:latest .'
                                 sh 'docker push pokilee10/jenkins_admin:latest'
                             }
                         }
-                    )
+                    }
                 }
             }
         }
