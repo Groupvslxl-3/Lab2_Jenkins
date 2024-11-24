@@ -72,8 +72,10 @@ pipeline {
             steps {
                 withKubeConfig(clusterName: KUBE_CLUSTER_NAME, contextName: KUBE_CONTEXT_NAME, credentialsId: KUBE_CONFIG_ID, serverUrl: KUBE_SERVER_URL) {
                     sh '''
-                        kubectl get ns
-                        helm ls
+                        cd k8s
+                        kubectl apply -f .
+                        kubectl rollout status deployment
+                        kubectl get all
                     '''
                 }
             }
