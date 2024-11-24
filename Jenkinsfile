@@ -1,6 +1,8 @@
 pipeline {
     environment {
-        KUBE_CONFIG_ID = 'minikube-jenkins-secret'
+        DOCKER_CREDENTIALS_ID = 'docker_hub'
+        DOCKER_REGISTRY = 'pokilee10'
+        KUBE_CONFIG_ID = ''
         KUBE_CLUSTER_NAME = 'minikube'
         KUBE_CONTEXT_NAME = 'minikube'
         KUBE_SERVER_URL = 'https://192.168.39.98:8443'
@@ -16,51 +18,48 @@ pipeline {
             }
         }
 
-        stage('Build and Push Images Stage') {
+        stage('Build and Deploy Services') {
             parallel {
-                stage('Build Frontend') {
-                    steps {
-                        withDockerRegistry(
-                            credentialsId: 'docker_hub', 
-                            url: 'https://index.docker.io/v1/'
-                        ) { 
-                            dir('frontend') {
-                                sh '''
-                                    docker build -t pokilee10/jenkins_frontend:latest .
-                                    docker push pokilee10/jenkins_frontend:latest
-                                '''
+                stage('Frontend Service') {
+                    stages {
+                        stage('Build Frontend') {
+                            steps {
+                                buildAndPushImage('frontend')
+                            }
+                        }
+                        stage('Deploy Frontend') {
+                            steps {
+                                deployService('frontend')
                             }
                         }
                     }
                 }
 
-                stage('Build Backend') {
-                    steps {
-                        withDockerRegistry(
-                            credentialsId: 'docker_hub', 
-                            url: 'https://index.docker.io/v1/'
-                        ) {
-                            dir('backend') {
-                                sh '''
-                                    docker build -t pokilee10/jenkins_backend:latest .
-                                    docker push pokilee10/jenkins_backend:latest
-                                '''
+                stage('Backend Service') {
+                    stages {
+                        stage('Build Backend') {
+                            steps {
+                                buildAndPushImage('backend')
+                            }
+                        }
+                        stage('Deploy Backend') {
+                            steps {
+                                deployService('backend')
                             }
                         }
                     }
                 }
 
-                stage('Build Admin') {
-                    steps {
-                        withDockerRegistry(
-                            credentialsId: 'docker_hub', 
-                            url: 'https://index.docker.io/v1/'
-                        ) {
-                            dir('admin') {
-                                sh '''
-                                    docker build -t pokilee10/jenkins_admin:latest .
-                                    docker push pokilee10/jenkins_admin:latest
-                                '''
+                stage('Admin Service') {
+                    stages {
+                        stage('Build Admin') {
+                            steps {
+                                buildAndPushImage('admin')
+                            }
+                        }
+                        stage('Deploy Admin') {
+                            steps {
+                                deployService('admin')
                             }
                         }
                     }
@@ -68,17 +67,66 @@ pipeline {
             }
         }
 
-        stage('Test') {
+        stage('Verify Deployments') {
             steps {
-                withKubeConfig(clusterName: KUBE_CLUSTER_NAME, contextName: KUBE_CONTEXT_NAME, credentialsId: KUBE_CONFIG_ID, serverUrl: KUBE_SERVER_URL) {
-                    sh '''
-                        cd k8s
-                        kubectl apply -f .
-                        kubectl rollout status deployment
-                        kubectl get all
-                    '''
-                }
+                verifyDeployments()
             }
         }
+    }
+
+    post {
+        always {
+            cleanWs()
+        }
+        success {
+            echo "Pipeline completed successfully!"
+        }
+        failure {
+            echo "Pipeline failed!"
+        }
+    }
+}
+
+// Helper functions
+def buildAndPushImage(String serviceName) {
+    script {
+        withDockerRegistry(credentialsId: DOCKER_CREDENTIALS_ID, url: 'https://index.docker.io/v1/') {
+            dir(serviceName) {
+                sh """
+                    docker build -t ${DOCKER_REGISTRY}/jenkins_${serviceName}:latest .
+                    docker push ${DOCKER_REGISTRY}/jenkins_${serviceName}:latest
+                """
+            }
+        }
+    }
+}
+
+def deployService(String serviceName) {
+    withKubeConfig(
+        clusterName: KUBE_CLUSTER_NAME, 
+        contextName: KUBE_CONTEXT_NAME, 
+        credentialsId: KUBE_CONFIG_ID, 
+        serverUrl: KUBE_SERVER_URL
+    ) {
+        sh """
+            cd k8s
+            kubectl apply -f ${serviceName}.yaml
+            kubectl rollout status deployment/${serviceName}
+        """
+    }
+}
+
+def verifyDeployments() {
+    withKubeConfig(
+        clusterName: KUBE_CLUSTER_NAME, 
+        contextName: KUBE_CONTEXT_NAME, 
+        credentialsId: KUBE_CONFIG_ID, 
+        serverUrl: KUBE_SERVER_URL
+    ) {
+        sh '''
+            kubectl get pods
+            kubectl get services
+            kubectl get deployments
+        '''
     }
 }
