@@ -3,7 +3,7 @@ pipeline {
         KUBE_CONFIG_ID = 'minikube-jenkins-secret'
         KUBE_CLUSTER_NAME = 'minikube'
         KUBE_CONTEXT_NAME = 'minikube'
-        KUBE_SERVER_URL = 'https://192.168.39.206:8443'
+        KUBE_SERVER_URL = 'https://192.168.39.98:8443'
     }
 
     agent any
