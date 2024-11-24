@@ -28,7 +28,7 @@ pipeline {
                         }
                         stage('Deploy Frontend') {
                             steps {
-                                deployService('frontend')
+                                deployService('k8sFrontend')
                             }
                         }
                     }
@@ -43,7 +43,7 @@ pipeline {
                         }
                         stage('Deploy Backend') {
                             steps {
-                                deployService('backend')
+                                deployService('k8sBackend')
                             }
                         }
                     }
@@ -58,7 +58,7 @@ pipeline {
                         }
                         stage('Deploy Admin') {
                             steps {
-                                deployService('admin')
+                                deployService('k8sAdmin')
                             }
                         }
                     }
