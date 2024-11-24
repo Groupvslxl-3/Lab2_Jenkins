@@ -110,7 +110,6 @@ def deployService(String serviceName) {
         sh """
             cd k8s
             kubectl apply -f ${serviceName}.yaml
-            kubectl rollout status deployment/${serviceName}
         """
     }
 }
