@@ -1,4 +1,11 @@
 pipeline {
+    environment {
+        KUBE_CONFIG_ID = 'minikube-jenkins-secret'
+        KUBE_CLUSTER_NAME = 'minikube'
+        KUBE_CONTEXT_NAME = 'minikube'
+        KUBE_SERVER_URL = 'https://192.168.39.206:8443'
+    }
+
     agent any
 
     stages {
@@ -63,15 +70,7 @@ pipeline {
 
         stage('Test') {
             steps {
-                withKubeConfig(
-                    caCertificate: '', 
-                    clusterName: 'minikube', 
-                    contextName: 'minikube', 
-                    credentialsId: '', 
-                    namespace: '', 
-                    restrictKubeConfigAccess: false, 
-                    serverUrl: 'https://192.168.39.98:8443'
-                ) {
+                withKubeConfig(clusterName: KUBE_CLUSTER_NAME, contextName: KUBE_CONTEXT_NAME, credentialsId: KUBE_CONFIG_ID, serverUrl: KUBE_SERVER_URL) {
                     sh '''
                         kubectl get ns
                         helm ls
