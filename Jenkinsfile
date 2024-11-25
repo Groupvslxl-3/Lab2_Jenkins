@@ -24,7 +24,7 @@ pipeline {
                     def scannerHome = tool 'SonarScanner'
                     def services = ['admin', 'backend', 'frontend']
                     
-                    withSonarQubeEnv('sq1') {
+                    withSonarQubeEnv('sonar') {
                         services.each { service ->
                             dir(service) {
                                 if (service in ['admin', 'frontend']) {
