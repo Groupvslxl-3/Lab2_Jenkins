@@ -6,6 +6,7 @@ pipeline {
         KUBE_CLUSTER_NAME = 'minikube'
         KUBE_CONTEXT_NAME = 'minikube'
         KUBE_SERVER_URL = 'https://192.168.39.98:8443'
+        SONAR_TOKEN = credentials('sonarqube')
     }
     agent any
 
@@ -14,6 +15,60 @@ pipeline {
             steps {
                 git branch: 'main', 
                     url: 'https://github.com/Groupvslxl-3/Lab2_Jenkins.git'
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                script {
+                    def scannerHome = tool 'SonarScanner'
+                    def services = ['admin', 'backend', 'frontend']
+                    
+                    withSonarQubeEnv('sq1') {
+                        services.each { service ->
+                            dir(service) {
+                                {
+                                    if (service in ['admin', 'frontend']) {
+                                        // Cấu hình cho React projects
+                                        sh """
+                                            ${scannerHome}/bin/sonar-scanner \
+                                            -Dsonar.projectKey=${service} \
+                                            -Dsonar.projectName=${service} \
+                                            -Dsonar.sources=src \
+                                            -Dsonar.sourceEncoding=UTF-8 \
+                                            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
+                                            -Dsonar.exclusions=**/node_modules/**,**/*.spec.ts,**/*.spec.js \
+                                            -Dsonar.host.url=https://f2c7-171-250-164-108.ngrok-free.app
+                                        """
+                                    } else {
+                                        // Cấu hình cho Node.js backend
+                                        sh """
+                                            ${scannerHome}/bin/sonar-scanner \
+                                            -Dsonar.projectKey=${service} \
+                                            -Dsonar.projectName=${service} \
+                                            -Dsonar.sources=. \
+                                            -Dsonar.sourceEncoding=UTF-8 \
+                                            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
+                                            -Dsonar.exclusions=**/node_modules/**,**/*.spec.js,**/test/**,**/tests/** \
+                                            -Dsonar.host.url=https://f2c7-171-250-164-108.ngrok-free.app
+                                        """
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
+                    // Kiểm tra Quality Gate
+                    timeout(time: 5, unit: 'MINUTES') {
+                        services.each { service ->
+                            def qg = waitForQualityGate projectKey: service
+                            if (qg.status != 'OK') {
+                                error "Quality gate failed for ${service}: ${qg.status}"
+                            }
+                            echo "Quality gate passed for ${service}"
+                        }
+                    }
+                }
             }
         }
 
