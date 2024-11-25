@@ -36,9 +36,7 @@ pipeline {
                                         -Dsonar.sources=src \
                                         -Dsonar.sourceEncoding=UTF-8 \
                                         -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
-                                        -Dsonar.exclusions=**/node_modules/**,**/*.spec.ts,**/*.spec.js \
-                                        -Dsonar.host.url=https://b44a-171-247-159-64.ngrok-free.app
-                                        -Dsonar.login=${SONAR_TOKEN}
+                                        -Dsonar.exclusions=**/node_modules/**,**/*.spec.ts,**/*.spec.js 
                                     """
                                 } else {
                                     // Cấu hình cho Node.js backend
@@ -49,9 +47,7 @@ pipeline {
                                         -Dsonar.sources=. \
                                         -Dsonar.sourceEncoding=UTF-8 \
                                         -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
-                                        -Dsonar.exclusions=**/node_modules/**,**/*.spec.js,**/test/**,**/tests/** \
-                                        -Dsonar.host.url=https://b44a-171-247-159-64.ngrok-free.app
-                                        -Dsonar.login=${SONAR_TOKEN}
+                                        -Dsonar.exclusions=**/node_modules/**,**/*.spec.js,**/test/**,**/tests/** 
                                     """
                                 }
                             }
