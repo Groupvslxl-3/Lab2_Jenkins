@@ -21,7 +21,7 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 script {
-                    def scannerHome = tool 'SonarScanner'
+                    def scannerHome = tool 'sonar1'
                     def services = ['admin', 'backend', 'frontend']
                     
                     withSonarQubeEnv('sonar') {
@@ -38,6 +38,7 @@ pipeline {
                                         -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
                                         -Dsonar.exclusions=**/node_modules/**,**/*.spec.ts,**/*.spec.js \
                                         -Dsonar.host.url=https://f2c7-171-250-164-108.ngrok-free.app
+                                        -Dsonar.login=${SONAR_TOKEN}
                                     """
                                 } else {
                                     // Cấu hình cho Node.js backend
@@ -50,6 +51,7 @@ pipeline {
                                         -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
                                         -Dsonar.exclusions=**/node_modules/**,**/*.spec.js,**/test/**,**/tests/** \
                                         -Dsonar.host.url=https://f2c7-171-250-164-108.ngrok-free.app
+                                        -Dsonar.login=${SONAR_TOKEN}
                                     """
                                 }
                             }
