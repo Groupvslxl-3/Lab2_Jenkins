@@ -27,32 +27,30 @@ pipeline {
                     withSonarQubeEnv('sq1') {
                         services.each { service ->
                             dir(service) {
-                                {
-                                    if (service in ['admin', 'frontend']) {
-                                        // Cấu hình cho React projects
-                                        sh """
-                                            ${scannerHome}/bin/sonar-scanner \
-                                            -Dsonar.projectKey=${service} \
-                                            -Dsonar.projectName=${service} \
-                                            -Dsonar.sources=src \
-                                            -Dsonar.sourceEncoding=UTF-8 \
-                                            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
-                                            -Dsonar.exclusions=**/node_modules/**,**/*.spec.ts,**/*.spec.js \
-                                            -Dsonar.host.url=https://f2c7-171-250-164-108.ngrok-free.app
-                                        """
-                                    } else {
-                                        // Cấu hình cho Node.js backend
-                                        sh """
-                                            ${scannerHome}/bin/sonar-scanner \
-                                            -Dsonar.projectKey=${service} \
-                                            -Dsonar.projectName=${service} \
-                                            -Dsonar.sources=. \
-                                            -Dsonar.sourceEncoding=UTF-8 \
-                                            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
-                                            -Dsonar.exclusions=**/node_modules/**,**/*.spec.js,**/test/**,**/tests/** \
-                                            -Dsonar.host.url=https://f2c7-171-250-164-108.ngrok-free.app
-                                        """
-                                    }
+                                if (service in ['admin', 'frontend']) {
+                                    // Cấu hình cho React projects
+                                    sh """
+                                        ${scannerHome}/bin/sonar-scanner \
+                                        -Dsonar.projectKey=${service} \
+                                        -Dsonar.projectName=${service} \
+                                        -Dsonar.sources=src \
+                                        -Dsonar.sourceEncoding=UTF-8 \
+                                        -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
+                                        -Dsonar.exclusions=**/node_modules/**,**/*.spec.ts,**/*.spec.js \
+                                        -Dsonar.host.url=https://f2c7-171-250-164-108.ngrok-free.app
+                                    """
+                                } else {
+                                    // Cấu hình cho Node.js backend
+                                    sh """
+                                        ${scannerHome}/bin/sonar-scanner \
+                                        -Dsonar.projectKey=${service} \
+                                        -Dsonar.projectName=${service} \
+                                        -Dsonar.sources=. \
+                                        -Dsonar.sourceEncoding=UTF-8 \
+                                        -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
+                                        -Dsonar.exclusions=**/node_modules/**,**/*.spec.js,**/test/**,**/tests/** \
+                                        -Dsonar.host.url=https://f2c7-171-250-164-108.ngrok-free.app
+                                    """
                                 }
                             }
                         }
