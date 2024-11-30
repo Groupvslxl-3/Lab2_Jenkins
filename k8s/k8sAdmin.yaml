@@ -20,6 +20,9 @@ spec:
         image: pokilee10/jenkins_admin:latest
         ports:
         - containerPort: 8080
+        env:
+        - name: VITE_API
+          value: "https://api.tuilalinh.id.vn"
 
 ---
 apiVersion: v1

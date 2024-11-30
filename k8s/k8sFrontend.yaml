@@ -20,6 +20,9 @@ spec:
         image: pokilee10/jenkins_frontend:latest
         ports:
         - containerPort: 3000
+        env:
+        - name: REACT_APP_API
+          value: "https://api.tuilalinh.id.vn"
 
 ---
 apiVersion: v1
