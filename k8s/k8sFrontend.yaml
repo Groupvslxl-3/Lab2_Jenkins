@@ -17,7 +17,7 @@ spec:
       containers:
       - name: frontend
         imagePullPolicy: Always
-        image: shiroizdabezt/frontend:v2
+        image: pokilee10/jenkins_frontend:latest
         ports:
         - containerPort: 80
 

@@ -17,7 +17,7 @@ spec:
       containers:
       - name: backend
         imagePullPolicy: Always
-        image: shiroizdabezt/backend:v1
+        image: pokilee10/jenkins_backend:latest
         ports:
         - containerPort: 4000
 
