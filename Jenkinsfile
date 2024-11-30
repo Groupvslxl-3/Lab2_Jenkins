@@ -12,6 +12,7 @@ pipeline {
         KUBE_SERVER_URL = 'https://192.168.39.98:8443'
         SONAR_TOKEN = credentials('sonarqube')
         BUILD_TAG = "v${GIT_COMMIT[0..7]}"
+        CLUSTER_NAME = 'group15-cluster'
     }
     agent any
 
