@@ -1,82 +1,82 @@
-name: build_image
-on: 
-  workflow_dispatch:
-    inputs: 
-        ecs_or_ec2:
-          type: choice
-          description: select ecs or ec2 
-          options:
-          - ecs
-          - ec2
-          required: true
-  push:
-#      branches: [ main ]
-jobs:
-    docker:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v2
+# name: build_image
+# on: 
+#   workflow_dispatch:
+#     inputs: 
+#         ecs_or_ec2:
+#           type: choice
+#           description: select ecs or ec2 
+#           options:
+#           - ecs
+#           - ec2
+#           required: true
+#   push:
+# #      branches: [ main ]
+# jobs:
+#     docker:z
+#         runs-on: ubuntu-latest
+#         steps:
+#             - name: Checkout
+#               uses: actions/checkout@v2
 
-            - name: Login Docker Hub
-              uses: docker/login-action@v1
-              with:
-                username: ${{secrets.DOCKERHUB_USERNAME}}
-                password: ${{secrets.DOCKERHUB_ACCESSTOKEN}}
+#             - name: Login Docker Hub
+#               uses: docker/login-action@v1
+#               with:
+#                 username: ${{secrets.DOCKERHUB_USERNAME}}
+#                 password: ${{secrets.DOCKERHUB_ACCESSTOKEN}}
 
-            - name: Setup Docker Buildx
-              uses: docker/setup-buildx-action@v1
-              id: buildx
+#             - name: Setup Docker Buildx
+#               uses: docker/setup-buildx-action@v1
+#               id: buildx
             
-            - name: Build and Push Docker Image Admin
-              uses: docker/build-push-action@v2
-              with: 
-                context: ./
-                file: ././admin/Dockerfile
-                builder: ${{ steps.buildx.outputs.name}}
-                push: true
-                tags: ${{ secrets.DOCKERHUB_USERNAME}}/admin
+#             - name: Build and Push Docker Image Admin
+#               uses: docker/build-push-action@v2
+#               with: 
+#                 context: ./
+#                 file: ././admin/Dockerfile
+#                 builder: ${{ steps.buildx.outputs.name}}
+#                 push: true
+#                 tags: ${{ secrets.DOCKERHUB_USERNAME}}/admin
 
-            - name: Create ENV file
-              run: echo '${{ secrets.MONGODB }}' >> ".env"
+#             - name: Create ENV file
+#               run: echo '${{ secrets.MONGODB }}' >> ".env"
 
-            - name: Build and Push Docker Image Backend
-              uses: docker/build-push-action@v2
-              with: 
-                context: ./
-                file: ././backend/Dockerfile
-                builder: ${{ steps.buildx.outputs.name}}
-                push: true
-                tags: ${{ secrets.DOCKERHUB_USERNAME}}/backend
+#             - name: Build and Push Docker Image Backend
+#               uses: docker/build-push-action@v2
+#               with: 
+#                 context: ./
+#                 file: ././backend/Dockerfile
+#                 builder: ${{ steps.buildx.outputs.name}}
+#                 push: true
+#                 tags: ${{ secrets.DOCKERHUB_USERNAME}}/backend
 
-            - name: Build and Push Docker Image Frontend
-              uses: docker/build-push-action@v2
-              with: 
-                context: ./
-                file: ././frontend/Dockerfile
-                builder: ${{ steps.buildx.outputs.name}}
-                push: true
-                tags: ${{ secrets.DOCKERHUB_USERNAME}}/frontend
+#             - name: Build and Push Docker Image Frontend
+#               uses: docker/build-push-action@v2
+#               with: 
+#                 context: ./
+#                 file: ././frontend/Dockerfile
+#                 builder: ${{ steps.buildx.outputs.name}}
+#                 push: true
+#                 tags: ${{ secrets.DOCKERHUB_USERNAME}}/frontend
 
-            - name: Verify
-              run: echo ${{ steps.docker_build.outputs.digest }}
+#             - name: Verify
+#               run: echo ${{ steps.docker_build.outputs.digest }}
             
-            - name: Deploy to EC2
-              if: ${{ github.event.inputs.ecs_or_ec2 == 'ec2'}}
-              uses: convictional/trigger-workflow-and-wait@v1.3.0
-              with:
-                owner: shiroizdabezt
-                repo: DACN_Terraform
-                github_token: ${{ secrets.ACCESS_TOKEN }}
-                workflow_file_name: terraform.yml
-                ref: main
+#             - name: Deploy to EC2
+#               if: ${{ github.event.inputs.ecs_or_ec2 == 'ec2'}}
+#               uses: convictional/trigger-workflow-and-wait@v1.3.0
+#               with:
+#                 owner: shiroizdabezt
+#                 repo: DACN_Terraform
+#                 github_token: ${{ secrets.ACCESS_TOKEN }}
+#                 workflow_file_name: terraform.yml
+#                 ref: main
 
-            - name: Deploy to ECS
-              if: ${{ github.event.inputs.ecs_or_ec2 == 'ecs'}}
-              uses: convictional/trigger-workflow-and-wait@v1.3.0
-              with:
-                owner: pokilee10
-                repo: DACN_Terraform
-                github_token: ${{ secrets.ACCESS_TOKEN_POKILEE10 }}
-                workflow_file_name: terraform.yml
-                ref: main
+#             - name: Deploy to ECS
+#               if: ${{ github.event.inputs.ecs_or_ec2 == 'ecs'}}
+#               uses: convictional/trigger-workflow-and-wait@v1.3.0
+#               with:
+#                 owner: pokilee10
+#                 repo: DACN_Terraform
+#                 github_token: ${{ secrets.ACCESS_TOKEN_POKILEE10 }}
+#                 workflow_file_name: terraform.yml
+#                 ref: main
