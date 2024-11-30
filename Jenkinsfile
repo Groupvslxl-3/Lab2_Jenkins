@@ -141,7 +141,6 @@ pipeline {
 
 // Helper functions
 def buildAndPushImage(String serviceName) {
-    {
         withDockerRegistry(credentialsId: DOCKER_CREDENTIALS_ID, url: 'https://index.docker.io/v1/') {
             dir(serviceName) {
                 sh """
@@ -150,26 +149,21 @@ def buildAndPushImage(String serviceName) {
                 """
             }
         }
-    }
 }
 
 def deployService(String serviceName) {
-    {
         sh """
             cd k8s/tag
             kustomize edit set image ${serviceName}=${DOCKER_REGISTRY}/${serviceName}:${BUILD_TAG}
             aws eks update-kubeconfig --name ${CLUSTER_NAME}
             kubectl apply -k .
         """
-    }
 }
 
 def verifyDeployments() {
-    {
         sh '''
             kubectl get pods
             kubectl get services
             kubectl get deployments
         '''
-    }
 }
