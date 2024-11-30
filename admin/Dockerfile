@@ -22,7 +22,7 @@ COPY --from=builder /app/dist /usr/share/caddy
 COPY Caddyfile /etc/caddy/Caddyfile
 
 # Expose the default Caddy port
-EXPOSE 8080
+EXPOSE 80
 
 # Caddy will serve the static files by default
 CMD ["caddy", "run", "--config", "/etc/caddy/Caddyfile"]
