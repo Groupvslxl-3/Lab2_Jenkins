@@ -76,43 +76,49 @@ pipeline {
         stage('Build and Deploy Services') {
             parallel {
                 stage('Frontend Service') {
-                    stages {
-                        script {
-                            if (params.ACTION == 'buildandpush') {
-                                buildAndPushImage('frontend')
-                            }   else if (params.ACTION == 'deploy') {
-                                withAWS(credentials: 'AWS_SECRET_KEY_2', region: 'us-east-1') {
-                                    deployService('frontend')
-                                }
-                            } 
+                    steps {
+                        stages {
+                            script {
+                                if (params.ACTION == 'buildandpush') {
+                                    buildAndPushImage('frontend')
+                                }   else if (params.ACTION == 'deploy') {
+                                    withAWS(credentials: 'AWS_SECRET_KEY_2', region: 'us-east-1') {
+                                        deployService('frontend')
+                                    }
+                                } 
+                            }
                         }
                     }
                 }
 
                 stage('Backend Service') {
-                    stages {
-                        script {
-                            if (params.ACTION == 'buildandpush') {
-                                buildAndPushImage('admin')
-                            }   else if (params.ACTION == 'deploy') {
-                                withAWS(credentials: 'AWS_SECRET_KEY_2', region: 'us-east-1') {
-                                    deployService('backend')
-                                }
-                            } 
+                    steps {
+                        stages {
+                            script {
+                                if (params.ACTION == 'buildandpush') {
+                                    buildAndPushImage('admin')
+                                }   else if (params.ACTION == 'deploy') {
+                                    withAWS(credentials: 'AWS_SECRET_KEY_2', region: 'us-east-1') {
+                                        deployService('backend')
+                                    }
+                                } 
+                            }
                         }
                     }
                 }
 
                 stage('Admin Service') {
-                    stages {
-                        script {
-                            if (params.ACTION == 'buildandpush') {
-                                buildAndPushImage('admin')
-                            }   else if (params.ACTION == 'deploy') {
-                                withAWS(credentials: 'AWS_SECRET_KEY_2', region: 'us-east-1') {
-                                    deployService('admin')
-                                }
-                            } 
+                    steps {
+                        stages {
+                            script {
+                                if (params.ACTION == 'buildandpush') {
+                                    buildAndPushImage('admin')
+                                }   else if (params.ACTION == 'deploy') {
+                                    withAWS(credentials: 'AWS_SECRET_KEY_2', region: 'us-east-1') {
+                                        deployService('admin')
+                                    }
+                                } 
+                            }
                         }
                     }
                 }
