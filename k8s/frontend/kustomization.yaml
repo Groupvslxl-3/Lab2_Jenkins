@@ -1,0 +1,9 @@
+Dat Dang
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- k8sFrontend.yaml
+
+commonLabels:
+  app: frontend

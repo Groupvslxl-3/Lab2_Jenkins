@@ -7,6 +7,7 @@ pipeline {
         KUBE_CONTEXT_NAME = 'minikube'
         KUBE_SERVER_URL = 'https://192.168.39.98:8443'
         SONAR_TOKEN = credentials('sonarqube')
+        BUILD_TAG = "v${GIT_COMMIT[0..7]}"
     }
     agent any
 
@@ -143,8 +144,8 @@ def buildAndPushImage(String serviceName) {
         withDockerRegistry(credentialsId: DOCKER_CREDENTIALS_ID, url: 'https://index.docker.io/v1/') {
             dir(serviceName) {
                 sh """
-                    docker build -t ${DOCKER_REGISTRY}/jenkins_${serviceName}:latest .
-                    docker push ${DOCKER_REGISTRY}/jenkins_${serviceName}:latest
+                    docker build -t ${DOCKER_REGISTRY}/jenkins_${serviceName}:${BUILD_TAG} .
+                    docker push ${DOCKER_REGISTRY}/jenkins_${serviceName}:${BUILD_TAG}
                 """
             }
         }
@@ -161,6 +162,7 @@ def deployService(String serviceName) {
         sh """
             cd k8s
             kubectl apply -f ${serviceName}.yaml
+            kustomize edit set image ${serviceName}=${DOCKER_REGISTRY}/${serviceName}:${BUILD_TAG}
         """
     }
 }
