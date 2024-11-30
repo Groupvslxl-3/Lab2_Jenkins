@@ -154,7 +154,7 @@ def buildAndPushImage(String serviceName) {
 }
 
 def deployService(String serviceName) {
-    {
+    script {
         sh """
             cd k8s/tag
             kustomize edit set image ${serviceName}=${DOCKER_REGISTRY}/${serviceName}:${BUILD_TAG}
@@ -165,7 +165,7 @@ def deployService(String serviceName) {
 }
 
 def verifyDeployments() {
-    {
+    script {
         sh '''
             kubectl get pods
             kubectl get services
