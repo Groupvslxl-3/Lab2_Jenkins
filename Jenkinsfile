@@ -1,4 +1,8 @@
 pipeline {
+    parameters {
+        string(name: 'ACTION', defaultValue: 'buildandpush', description: 'Action to perform: build or deploy')
+    }
+
     environment {
         DOCKER_CREDENTIALS_ID = 'docker_hub'
         DOCKER_REGISTRY = 'pokilee10'
@@ -73,46 +77,43 @@ pipeline {
             parallel {
                 stage('Frontend Service') {
                     stages {
-                        stage('Build Frontend') {
-                            steps {
+                        script {
+                            if (params.ACTION == 'buildandpush') {
                                 buildAndPushImage('frontend')
-                            }
+                            }   else if (params.ACTION == 'deploy') {
+                                withAWS(credentials: 'AWS_SECRET_KEY', region: 'us-east-1') {
+                                    deployService('frontend')
+                                }
+                            } 
                         }
-                        // stage('Deploy Frontend') {
-                        //     steps {
-                        //         deployService('k8sFrontend')
-                        //     }
-                        // }
                     }
                 }
 
                 stage('Backend Service') {
                     stages {
-                        stage('Build Backend') {
-                            steps {
-                                buildAndPushImage('backend')
-                            }
+                        script {
+                            if (params.ACTION == 'buildandpush') {
+                                buildAndPushImage('frontend')
+                            }   else if (params.ACTION == 'deploy') {
+                                withAWS(credentials: 'AWS_SECRET_KEY', region: 'us-east-1') {
+                                    deployService('frontend')
+                                }
+                            } 
                         }
-                        // stage('Deploy Backend') {
-                        //     steps {
-                        //         deployService('k8sBackend')
-                        //     }
-                        // }
                     }
                 }
 
                 stage('Admin Service') {
                     stages {
-                        stage('Build Admin') {
-                            steps {
-                                buildAndPushImage('admin')
-                            }
+                        script {
+                            if (params.ACTION == 'buildandpush') {
+                                buildAndPushImage('frontend')
+                            }   else if (params.ACTION == 'deploy') {
+                                withAWS(credentials: 'AWS_SECRET_KEY', region: 'us-east-1') {
+                                    deployService('frontend')
+                                }
+                            } 
                         }
-                        // stage('Deploy Admin') {
-                        //     steps {
-                        //         deployService('k8sAdmin')
-                        //     }
-                        // }
                     }
                 }
             }
@@ -153,28 +154,18 @@ def buildAndPushImage(String serviceName) {
 }
 
 def deployService(String serviceName) {
-    withKubeConfig(
-        clusterName: KUBE_CLUSTER_NAME, 
-        contextName: KUBE_CONTEXT_NAME, 
-        credentialsId: KUBE_CONFIG_ID, 
-        serverUrl: KUBE_SERVER_URL
-    ) {
+    {
         sh """
             cd k8s/tag
             kustomize edit set image ${serviceName}=${DOCKER_REGISTRY}/${serviceName}:${BUILD_TAG}
-            kubectl apply -f ${serviceName}.yaml
-            
+            aws eks update-kubeconfig --name ${CLUSTER_NAME}
+            kubectl apply -k .
         """
     }
 }
 
 def verifyDeployments() {
-    withKubeConfig(
-        clusterName: KUBE_CLUSTER_NAME, 
-        contextName: KUBE_CONTEXT_NAME, 
-        credentialsId: KUBE_CONFIG_ID, 
-        serverUrl: KUBE_SERVER_URL
-    ) {
+    {
         sh '''
             kubectl get pods
             kubectl get services
