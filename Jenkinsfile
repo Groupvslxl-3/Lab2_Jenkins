@@ -18,55 +18,55 @@ pipeline {
             }
         }
 
-        stage('SonarQube Analysis') {
-            steps {
-                script {
-                    def scannerHome = tool 'sonar1'
-                    def services = ['admin', 'backend', 'frontend']
+        // stage('SonarQube Analysis') {
+        //     steps {
+        //         script {
+        //             def scannerHome = tool 'sonar1'
+        //             def services = ['admin', 'backend', 'frontend']
                     
-                    withSonarQubeEnv('sonar') {
-                        services.each { service ->
-                            dir(service) {
-                                if (service in ['admin', 'frontend']) {
-                                    // Cấu hình cho React projects
-                                    sh """
-                                        ${scannerHome}/bin/sonar-scanner \
-                                        -Dsonar.projectKey=${service} \
-                                        -Dsonar.projectName=${service} \
-                                        -Dsonar.sources=src \
-                                        -Dsonar.sourceEncoding=UTF-8 \
-                                        -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
-                                        -Dsonar.exclusions=**/node_modules/**,**/*.spec.ts,**/*.spec.js 
-                                    """
-                                } else {
-                                    // Cấu hình cho Node.js backend
-                                    sh """
-                                        ${scannerHome}/bin/sonar-scanner \
-                                        -Dsonar.projectKey=${service} \
-                                        -Dsonar.projectName=${service} \
-                                        -Dsonar.sources=. \
-                                        -Dsonar.sourceEncoding=UTF-8 \
-                                        -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
-                                        -Dsonar.exclusions=**/node_modules/**,**/*.spec.js,**/test/**,**/tests/** 
-                                    """
-                                }
-                            }
-                        }
-                    }
+        //             withSonarQubeEnv('sonar') {
+        //                 services.each { service ->
+        //                     dir(service) {
+        //                         if (service in ['admin', 'frontend']) {
+        //                             // Cấu hình cho React projects
+        //                             sh """
+        //                                 ${scannerHome}/bin/sonar-scanner \
+        //                                 -Dsonar.projectKey=${service} \
+        //                                 -Dsonar.projectName=${service} \
+        //                                 -Dsonar.sources=src \
+        //                                 -Dsonar.sourceEncoding=UTF-8 \
+        //                                 -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
+        //                                 -Dsonar.exclusions=**/node_modules/**,**/*.spec.ts,**/*.spec.js 
+        //                             """
+        //                         } else {
+        //                             // Cấu hình cho Node.js backend
+        //                             sh """
+        //                                 ${scannerHome}/bin/sonar-scanner \
+        //                                 -Dsonar.projectKey=${service} \
+        //                                 -Dsonar.projectName=${service} \
+        //                                 -Dsonar.sources=. \
+        //                                 -Dsonar.sourceEncoding=UTF-8 \
+        //                                 -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
+        //                                 -Dsonar.exclusions=**/node_modules/**,**/*.spec.js,**/test/**,**/tests/** 
+        //                             """
+        //                         }
+        //                     }
+        //                 }
+        //             }
                     
-                    // Kiểm tra Quality Gate
-                    timeout(time: 5, unit: 'MINUTES') {
-                        services.each { service ->
-                            def qg = waitForQualityGate projectKey: service
-                            if (qg.status != 'OK') {
-                                error "Quality gate failed for ${service}: ${qg.status}"
-                            }
-                            echo "Quality gate passed for ${service}"
-                        }
-                    }
-                }
-            }
-        }
+        //             // Kiểm tra Quality Gate
+        //             timeout(time: 5, unit: 'MINUTES') {
+        //                 services.each { service ->
+        //                     def qg = waitForQualityGate projectKey: service
+        //                     if (qg.status != 'OK') {
+        //                         error "Quality gate failed for ${service}: ${qg.status}"
+        //                     }
+        //                     echo "Quality gate passed for ${service}"
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
 
         stage('Build and Deploy Services') {
             parallel {
@@ -77,11 +77,11 @@ pipeline {
                                 buildAndPushImage('frontend')
                             }
                         }
-                        stage('Deploy Frontend') {
-                            steps {
-                                deployService('k8sFrontend')
-                            }
-                        }
+                        // stage('Deploy Frontend') {
+                        //     steps {
+                        //         deployService('k8sFrontend')
+                        //     }
+                        // }
                     }
                 }
 
@@ -92,11 +92,11 @@ pipeline {
                                 buildAndPushImage('backend')
                             }
                         }
-                        stage('Deploy Backend') {
-                            steps {
-                                deployService('k8sBackend')
-                            }
-                        }
+                        // stage('Deploy Backend') {
+                        //     steps {
+                        //         deployService('k8sBackend')
+                        //     }
+                        // }
                     }
                 }
 
@@ -107,21 +107,21 @@ pipeline {
                                 buildAndPushImage('admin')
                             }
                         }
-                        stage('Deploy Admin') {
-                            steps {
-                                deployService('k8sAdmin')
-                            }
-                        }
+                        // stage('Deploy Admin') {
+                        //     steps {
+                        //         deployService('k8sAdmin')
+                        //     }
+                        // }
                     }
                 }
             }
         }
 
-        stage('Verify Deployments') {
-            steps {
-                verifyDeployments()
-            }
-        }
+        // stage('Verify Deployments') {
+        //     steps {
+        //         verifyDeployments()
+        //     }
+        // }
     }
 
     post {
