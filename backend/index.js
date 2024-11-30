@@ -18,7 +18,7 @@ app.use(function(req, res, next) {
 })
 
 app.use(cors({
-    origin: ['http://tuilalinh.id.vn:3000', 'http://admin.tuilalinh.id.vn:8080', "*"],
+    origin: ['https://tuilalinh.id.vn', 'https://admin.tuilalinh.id.vn', "*"],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
 }));
 app.use(express.json());
@@ -54,7 +54,7 @@ app.post("/upload" ,upload.single('product'),(req,res) =>{
     console.log(req);
     res.json({
         success: 1,
-        image_url:`http://api.tuilalinh.id.vn:4000/images/${req.file.filename}`
+        image_url:`https://api.tuilalinh.id.vn/images/${req.file.filename}`
     })
 })
 
