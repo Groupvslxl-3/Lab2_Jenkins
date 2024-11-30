@@ -93,7 +93,7 @@ pipeline {
                     steps {
                         script {
                             if (params.ACTION == 'buildandpush') {
-                                buildAndPushImage('admin')
+                                buildAndPushImage('backend')
                             }   else if (params.ACTION == 'deploy') {
                                 withAWS(credentials: 'AWS_SECRET_KEY_2', region: 'us-east-1') {
                                     deployService('backend')
