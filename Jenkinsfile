@@ -160,9 +160,10 @@ def deployService(String serviceName) {
         serverUrl: KUBE_SERVER_URL
     ) {
         sh """
-            cd k8s
-            kubectl apply -f ${serviceName}.yaml
+            cd k8s/tag
             kustomize edit set image ${serviceName}=${DOCKER_REGISTRY}/${serviceName}:${BUILD_TAG}
+            kubectl apply -f ${serviceName}.yaml
+            
         """
     }
 }

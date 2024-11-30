@@ -17,7 +17,7 @@ spec:
       containers:
       - name: admin
         imagePullPolicy: Always
-        image: pokilee10/jenkins_admin:latest
+        image: admin
         ports:
         - containerPort: 8080
         env:
