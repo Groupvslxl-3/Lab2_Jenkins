@@ -81,7 +81,7 @@ pipeline {
                             if (params.ACTION == 'buildandpush') {
                                 buildAndPushImage('frontend')
                             }   else if (params.ACTION == 'deploy') {
-                                withAWS(credentials: 'AWS_SECRET_KEY', region: 'us-east-1') {
+                                withAWS(credentials: 'AWS_SECRET_KEY_2', region: 'us-east-1') {
                                     deployService('frontend')
                                 }
                             } 
@@ -93,10 +93,10 @@ pipeline {
                     stages {
                         script {
                             if (params.ACTION == 'buildandpush') {
-                                buildAndPushImage('frontend')
+                                buildAndPushImage('admin')
                             }   else if (params.ACTION == 'deploy') {
-                                withAWS(credentials: 'AWS_SECRET_KEY', region: 'us-east-1') {
-                                    deployService('frontend')
+                                withAWS(credentials: 'AWS_SECRET_KEY_2', region: 'us-east-1') {
+                                    deployService('backend')
                                 }
                             } 
                         }
@@ -107,10 +107,10 @@ pipeline {
                     stages {
                         script {
                             if (params.ACTION == 'buildandpush') {
-                                buildAndPushImage('frontend')
+                                buildAndPushImage('admin')
                             }   else if (params.ACTION == 'deploy') {
-                                withAWS(credentials: 'AWS_SECRET_KEY', region: 'us-east-1') {
-                                    deployService('frontend')
+                                withAWS(credentials: 'AWS_SECRET_KEY_2', region: 'us-east-1') {
+                                    deployService('admin')
                                 }
                             } 
                         }
