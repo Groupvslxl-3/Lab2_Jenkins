@@ -18,7 +18,7 @@ app.use(function(req, res, next) {
 })
 
 app.use(cors({
-    origin: ['https://tuilalinh.id.vn', 'https://admin.tuilalinh.id.vn', "*"],
+    origin: ['https://tuilalinh.id.vn', 'https://admin.t    uilalinh.id.vn', "*"],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
 }));
 app.use(express.json());
