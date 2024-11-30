@@ -33,7 +33,7 @@ spec:
     app: backend
   ports:
   - protocol: TCP
-    port: 4000         # Port mà Service expose (truy cập từ cluster)
+    port: 80      # Port mà Service expose (truy cập từ cluster)
     targetPort: 4000 # Port mà container lắng nghe
     nodePort: 30082  # Port mà node (máy chủ) expose ra ngoài
   type: NodePort
