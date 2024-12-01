@@ -82,7 +82,7 @@ pipeline {
                             if (params.ACTION == 'buildandpush') {
                                 buildAndPushImage('frontend')
                             }   else if (params.ACTION == 'deploy') {
-                                withAWS(credentials: 'AWS_SECRET_KEY', region: 'us-east-1') {
+                                withAWS(credentials: 'AWS_SECRET_KEY_2', region: 'us-east-1') {
                                     deployService('frontend')
                                 }
                             } 
@@ -96,7 +96,7 @@ pipeline {
                             if (params.ACTION == 'buildandpush') {
                                 buildAndPushImage('backend')
                             }   else if (params.ACTION == 'deploy') {
-                                withAWS(credentials: 'AWS_SECRET_KEY', region: 'us-east-1') {
+                                withAWS(credentials: 'AWS_SECRET_KEY_2', region: 'us-east-1') {
                                     deployService('backend')
                                 }
                             } 
@@ -110,7 +110,7 @@ pipeline {
                             if (params.ACTION == 'buildandpush') {
                                 buildAndPushImage('admin')
                             }   else if (params.ACTION == 'deploy') {
-                                withAWS(credentials: 'AWS_SECRET_KEY', region: 'us-east-1') {
+                                withAWS(credentials: 'AWS_SECRET_KEY_2', region: 'us-east-1') {
                                     deployService('admin')
                                 }
                             } 
