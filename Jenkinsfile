@@ -154,6 +154,8 @@ def buildAndPushImage(String serviceName) {
 
 def deployService(String serviceName) {
         sh """
+            kubectl apply -f ./k8s/deploy.yml
+            kubectl apply -f ./k8s/ingress.yml
             cd k8s/tag/${serviceName}
             kustomize edit set image ${serviceName}=${DOCKER_REGISTRY}/jenkins_${serviceName}:${BUILD_TAG}
             aws eks update-kubeconfig --name ${CLUSTER_NAME}
