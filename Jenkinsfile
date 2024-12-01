@@ -75,15 +75,6 @@ pipeline {
         // }
 
         stage('Build and Deploy Services') {
-            steps {
-                    script {
-                        sh """
-                            aws eks update-kubeconfig --name ${CLUSTER_NAME}
-                            kubectl apply -f ./k8s/deploy.yml
-                            kubectl apply -f ./k8s/ingress.yml
-                        """
-                    }
-                }
             parallel {
                 stage('Frontend Service') {
                     steps {
@@ -163,6 +154,9 @@ def buildAndPushImage(String serviceName) {
 
 def deployService(String serviceName) {
         sh """
+            aws eks update-kubeconfig --name ${CLUSTER_NAME}
+            kubectl apply -f ./k8s/deploy.yml
+            kubectl apply -f ./k8s/ingress.yml
             cd k8s/tag/${serviceName}
             kustomize edit set image ${serviceName}=${DOCKER_REGISTRY}/jenkins_${serviceName}:${BUILD_TAG}
             kubectl apply -k .
