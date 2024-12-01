@@ -154,7 +154,7 @@ def buildAndPushImage(String serviceName) {
 
 def deployService(String serviceName) {
         sh """
-            aws eks update-kubeconfig --name ${CLUSTER_NAME}
+            aws eks update-kubeconfig --name ${CLUSTER_NAME} --region us-east-1
             kubectl apply -f ./k8s/deploy.yml
             kubectl apply -f ./k8s/ingress.yml
             cd k8s/tag/${serviceName}
