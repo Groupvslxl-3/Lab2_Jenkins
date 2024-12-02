@@ -73,6 +73,21 @@ pipeline {
         //         }
         //     }
         // }
+        stage('Apply ingress and deploy') {
+            steps {
+                script {
+                    if (params.ACTION == 'deploy') {
+                    withAWS(credentials: 'AWS_SECRET_KEY', region: 'us-east-1') {
+                        sh """
+                            aws eks update-kubeconfig --name ${CLUSTER_NAME} --region us-east-1
+                            kubectl apply -f ./k8s/deploy.yml
+                            kubectl apply -f ./k8s/ingress.yaml
+                        """
+                    }
+                    }
+                }
+            }
+        }
 
         stage('Build and Deploy Services') {
             parallel {
