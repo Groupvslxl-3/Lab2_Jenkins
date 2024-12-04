@@ -157,7 +157,7 @@ pipeline {
 
 // Helper functions
 def buildAndPushImage(String serviceName) {
-        withDockerRegistry(credentialsId: DOCKER_CREDENTIALS_ID, url: 'https://index.docker.io/v1/') {
+        withDockerRegistry(credentialsId: DOCKER_CREDENTIALS_ID) {
             dir(serviceName) {
                 sh """
                     docker build -t ${DOCKER_REGISTRY}/jenkins_${serviceName}:${BUILD_TAG} .
